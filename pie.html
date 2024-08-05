@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Study Goal - Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .header {
+            width: 100%;
+            background-color: navy;
+            color: white;
+            font-size: 2em;
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            width: 400px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            text-align: left;
+        }
+        button {
+            margin-top: 20px;
+        }
+        canvas {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Study Goal - Tracker</div>
+        <div class="chart-container">
+            <canvas id="progressChart"></canvas>
+            <div id="percentage"></div>
+        </div>
+        <h2>Calculate Now!</h2>
+        <h3>Science 1</h3>
+        <div class="form-container">
+            <form id="studyForm">
+                <input type="checkbox" id="gravitation"> Gravitation<br>
+                <input type="checkbox" id="periodicClassification"> Periodic Classification Of Elements<br>
+                <input type="checkbox" id="chemicalReaction"> Chemical Reaction & Equations<br>
+                <input type="checkbox" id="electricCurrent"> Effects Of Electric Current<br>
+                <input type="checkbox" id="heat"> Heat<br>
+                <input type="checkbox" id="refractionOfLight"> Refraction Of Light<br>
+                <input type="checkbox" id="lenses"> Lenses<br>
+                <input type="checkbox" id="metallurgy"> Metallurgy<br>
+            </form>
+        </div>
+        <button onclick="updateChart()">Calculate Now</button>
+    </div>
+
+    <script>
+        let progressChart;
+
+        function initializeChart() {
+            const totalTasks = document.querySelectorAll('#studyForm input[type="checkbox"]').length;
+
+            const data = {
+                labels: ['Completed', 'Remaining'],
+                datasets: [{
+                    data: [0, totalTasks],
+                    backgroundColor: ['#4caf50', '#f44336']
+                }]
+            };
+
+            const config = {
+                type: 'pie',
+                data: data,
+            };
+
+            progressChart = new Chart(
+                document.getElementById('progressChart'),
+                config
+            );
+
+            document.getElementById('percentage').innerText = 'Completed: 0%';
+        }
+
+        function updateChart() {
+            const checkboxes = document.querySelectorAll('#studyForm input[type="checkbox"]');
+            let completed = 0;
+            checkboxes.forEach((checkbox) => {
+                if (checkbox.checked) {
+                    completed++;
+                }
+            });
+            const total = checkboxes.length;
+            const remaining = total - completed;
+            const completedPercentage = ((completed / total) * 100).toFixed(2);
+
+            progressChart.data.datasets[0].data = [completed, remaining];
+            progressChart.update();
+
+            document.getElementById('percentage').innerText = `Completed: ${completedPercentage}%`;
+        }
+
+        // Initialize the chart with zero progress
+        window.onload = initializeChart;
+    </script>
+</body>
+</html>
